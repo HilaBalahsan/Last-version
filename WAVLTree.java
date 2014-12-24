@@ -151,6 +151,7 @@ public class WAVLTree{
 
 		if(temp.left != null)
 			temp.left.parent = temp;
+		// This dose no changes.
 
 		if ((node.right != null) &&  (node.left != null))
 			node.rank = Math.max(node.right.rank, node.left.rank) +1 ;
@@ -294,7 +295,7 @@ public class WAVLTree{
 		{
 			t.right = insert_helper(key, i, t.right);
 			t.right.parent = t;
-			
+
 			int[] rankdiff = getRankDiff(t);
 			if ((rankdiff[0] - rankdiff[1]) == 2) 
 			{
@@ -325,11 +326,11 @@ public class WAVLTree{
 	public WAVLNode FindPredecessor(WAVLNode node)
 	{
 		WAVLNode temp = node;
-		if (temp.left!=null)
+		if (temp.left!= null)
 		{
-			while (temp.left.right!=null)
+			while (temp.left.right!= null)
 			{
-				temp.left=temp.left.right;
+				temp.left = temp.left.right;
 			}
 			return temp.left;
 		}
@@ -672,7 +673,7 @@ public class WAVLTree{
 
 		// find the node that contains the key
 		WAVLNode node = NodeForKey(k);
-		
+
 		if ((node == this.minimum) && (this.treeSize > 1))
 		{
 			WAVLNode sucessor = this.FindSuccessor(node);
@@ -682,7 +683,7 @@ public class WAVLTree{
 			else
 				DeleteUnaryNode(node, k);
 		}
-		
+
 		else if ((node == this.maximum)&&(this.treeSize > 1))
 		{
 			WAVLNode predecessor = this.FindPredecessor(node);
@@ -691,7 +692,7 @@ public class WAVLTree{
 				DeleteLeaf(node,k);
 			else
 				DeleteUnaryNode(node, k);		}
-		
+
 		// if k is a leaf
 		else if (node.rank == 0)
 		{
@@ -719,7 +720,7 @@ public class WAVLTree{
 			}
 			node.key = tempKey;
 			node.info = tempInfo;
- 
+
 		}
 		this.treeSize--;
 		return 	countDeleteBalance;
@@ -754,7 +755,7 @@ public class WAVLTree{
 			{
 				System.out.println("case 3 , " + node.key );
 				System.out.println();
-				
+
 				node = this.rotateWithRightChild(node);
 				this.root = node;
 				countDeleteBalance++;
@@ -818,7 +819,7 @@ public class WAVLTree{
 
 
 
-	public void reckeysToArray(WAVLNode node, List<Integer> keys){
+	public void reckeysToArray(WAVLNode node, LinkedList keys){
 		if(node != null)
 		{
 			reckeysToArray(node.left , keys);
@@ -832,7 +833,7 @@ public class WAVLTree{
 	 * or an empty array if the tree is empty.
 	 */
 	public int[] keysToArray(){
-		List<Integer> keys = new ArrayList<Integer>();
+		LinkedList keys = new LinkedList();
 		if(this.empty())
 		{
 			int[] keyArray = new int[0]; 
@@ -844,17 +845,20 @@ public class WAVLTree{
 		}
 
 		// Converting
-		int[] keysArray = new int[keys.size()];
-		java.util.Iterator<Integer> iter = keys.iterator();
-		for(int i = 0; iter.hasNext(); i++)
+		int[] keysArray = new int[this.treeSize];
+		int index = 0;
+		Node node = keys.head.getNext();
+		while(node != null)
 		{
-			keysArray[i] = iter.next();
+			keysArray[index] = (int) node.getData();
+			node = node.getNext();
+			index++;
 		}
 		return keysArray;
 	}
 
 
-	public void recinfoToArray(WAVLNode node, List<String> inf){
+	public void recinfoToArray(WAVLNode node, LinkedList inf){
 		if(node != null)
 		{
 			recinfoToArray(node.left , inf);
@@ -872,7 +876,7 @@ public class WAVLTree{
 	 * or an empty array if the tree is empty.
 	 */
 	public String[] infoToArray() {
-		List<String> info = new ArrayList<String>();
+		LinkedList info = new LinkedList();
 		if(this.empty())
 		{
 			String[] infoArray = new String[0]; 
@@ -884,11 +888,14 @@ public class WAVLTree{
 		}
 
 		String[] infoToArr = new String[this.size()];
-		for(int i = 0 ; i < info.size(); i++)
+		int index = 0;
+		Node node = info.head.getNext();
+		while(node != null)
 		{
-			infoToArr[i] = info.get(i);
+			infoToArr[index] = (String) node.getData();
+			index++;
+			node = node.getNext();
 		}
-
 		return infoToArr;
 	}
 
@@ -964,4 +971,101 @@ public class WAVLTree{
 			this.rank = 0;
 		}
 	}
+	class LinkedList {
+	    // reference to the head node.
+	    private Node head;
+	 
+	    // LinkedList constructor
+	    public LinkedList() {
+	        // this is an empty list, so the reference to the head node
+	        // is set to a new node with no data
+	        head = new Node(null);
+	    }
+	 
+	    public void add(Object data)
+	    // appends the specified element to the end of this list.
+	    {
+	        Node Temp = new Node(data);
+	        Node Current = head;
+	        // starting at the head node, crawl to the end of the list
+	        while (Current.getNext() != null) {
+	            Current = Current.getNext();
+	        }
+	        // the last node's "next" reference set to our new node
+	        Current.setNext(Temp);
+	    }
+	 
+	    public void add(Object data, int index)
+	    // inserts the specified element at the specified position in this list
+	    {
+	        Node Temp = new Node(data);
+	        Node Current = head;
+	        // crawl to the requested index or the last element in the list,
+	        // whichever comes first
+	        for (int i = 1; i < index && Current.getNext() != null; i++) {
+	            Current = Current.getNext();
+	        }
+	        // set the new node's next-node reference to this node's next-node
+	        // reference
+	        Temp.setNext(Current.getNext());
+	        // now set this node's next-node reference to the new node
+	        Current.setNext(Temp);
+	    }
+	 
+	    public Object get(int index)
+	    // returns the element at the specified position in this list.
+	    {
+	        // index must be 1 or higher
+	        if (index <= 0)
+	            return null;
+	 
+	        Node Current = head.getNext();
+	        for (int i = 1; i < index; i++) {
+	            if (Current.getNext() == null)
+	                return null;
+	 
+	            Current = Current.getNext();
+	        }
+	        return Current.getData();
+	    }
+	}
+	
+    private class Node {
+        // reference to the next node in the chain,
+        // or null if there isn't one.
+        Node next;
+        // data carried by this node.
+        // could be of any type you need.
+        Object data;
+ 
+        // Node constructor
+        public Node(Object dataValue) {
+            next = null;
+            data = dataValue;
+        }
+ 
+        // another Node constructor if we want to
+        // specify the node to point to.
+        public Node(Object dataValue, Node nextValue) {
+            next = nextValue;
+            data = dataValue;
+        }
+ 
+        // these methods should be self-explanatory
+        public Object getData() {
+            return data;
+        }
+ 
+        public void setData(Object dataValue) {
+            data = dataValue;
+        }
+ 
+        public Node getNext() {
+            return next;
+        }
+ 
+        public void setNext(Node nextValue) {
+            next = nextValue;
+        }
+    }
 }
