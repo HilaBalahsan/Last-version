@@ -96,12 +96,23 @@ public class insAndDelTest {
 			{
 				T.insert(num, Integer.toString(num));
 			}
+			WAVLTree.WAVLNode check  = T.NodeForKey(20);
+			
+			T.delete(20);
+			if(check != null)
+			{
+				System.out.println("The node was not delet");
+			}
+			
 			
 			T.printBinaryTree(T.root, 0);
-			int [] keysArr = T.keysToArray();
-			String[] infoArr = T.infoToArray();
-			System.out.println(Arrays.toString(keysArr));
-			System.out.println(Arrays.deepToString(infoArr));
+			
+
+			
+//			int [] keysArr = T.keysToArray();
+//			String[] infoArr = T.infoToArray();
+//			System.out.println(Arrays.toString(keysArr));
+//			System.out.println(Arrays.deepToString(infoArr));
 			break;
 	
 		}

@@ -911,11 +911,7 @@ public class WAVLTree{
 		return this.treeSize;	
 	}
 
-
-
-
-
-
+	
 	public void printBinaryTree(WAVLNode root, int level){
 		if(root == null)
 			return;
@@ -971,6 +967,9 @@ public class WAVLTree{
 			this.rank = 0;
 		}
 	}
+	
+	
+	
 	class LinkedList {
 	    // reference to the head node.
 	    private Node head;
