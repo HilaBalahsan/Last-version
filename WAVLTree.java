@@ -947,10 +947,10 @@ public class WAVLTree{
 		{
 			for(int i=0;i<level-1;i++)
 				System.out.print("|\t");
-			System.out.println("|----------"+root.key +" " + Arrays.toString(this.getRankDiff(root)));
+			System.out.println("|-------------------------"+root.key +" " + Arrays.toString(this.getRankDiff(root)) + " " + " Rank = " + root.rank );
 		}
 		else
-			System.out.println(root.key +" " + Arrays.toString(this.getRankDiff(root)));
+			System.out.println(root.key +" " + Arrays.toString(this.getRankDiff(root))+ " " + " Rank = " + root.rank);
 		printBinaryTree(root.left, level+1);
 	}
 

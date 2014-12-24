@@ -3,28 +3,59 @@ public class insAndDelTest {
 
 	public static void main(String[] args) {
 		WAVLTree T = new WAVLTree();
-		//int[] arr = {2,5,21,8,90,10,11,34,7,55,6,3,4};
-		int [] arr = {20,5,40,50,45,60};
-		for (int num:arr)
+		int mikre = 4;
+
+		switch(mikre)
 		{
-			T.insert(num, Integer.toString(num));
+		case 1:
+		{
+			// Heavy on the right side. want to delete left child
+			int [] arr = {20,5,30,40,50};
+			for (int num:arr)
+			{
+				T.insert(num, Integer.toString(num));
+			}
+			T.delete(5);
+			T.printBinaryTree(T.root, 0);
+		} 
+		case 2:
+		{
+			// Heavy on the left side. want to delete right child
+			int [] arr = {50 , 40, 60, 30};
+			for (int num:arr)
+			{
+				T.insert(num, Integer.toString(num));
+			}
+			T.delete(40);
+			T.printBinaryTree(T.root, 0);
 		}
-		T.printBinaryTree(T.root, 0);
-		
-		for (int i = 0; i <= 3; i++)
-			System.out.println();
-//		
-//		T.delete(5);
-//		T.delete(3);
-//		T.delete(4);
-//		System.out.println(T.NodeForKey(5).rank);
-//
-//
-//		
-    	T.printBinaryTree(T.root, 0);
+		case 3:
+		{
+			// deleting Unary
+			int [] arr = {45,20,50,5,40,60,43};;
+			for (int num:arr)
+			{
+				T.insert(num, Integer.toString(num));
+			}
+			T.delete(20);
+			T.printBinaryTree(T.root, 0);
 
-		
+		}
+		case 4:
+		{
+			// Heavy on the left. Deleting a root
+			int [] arr = {45,20,50,5,40,60,43};
+			for (int num:arr)
+			{
+				T.insert(num, Integer.toString(num));
+			}
+			T.delete(45);
+
+			T.printBinaryTree(T.root, 0);
+		}
+		}
 	}
-	
-
 }
+
+
+
