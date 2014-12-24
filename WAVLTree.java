@@ -459,7 +459,7 @@ public class WAVLTree{
 				}
 			}
 			else if((rankDiff[0] == 2) &&(rankDiff[1] == 1))
-				// The father is heavy on the right size. two nodes on the left. One on the right. 
+				// The father is heavy on the right size. two nodes on the right. One on the left. 
 
 			{
 				if (node.parent.key > k)
@@ -689,18 +689,23 @@ public class WAVLTree{
 		{
 			WAVLNode sucessor = this.FindSuccessor(node);
 			this.minimum = sucessor;
-			DeleteLeaf(node,k);
+			if(node.rank == 0)
+				DeleteLeaf(node,k);
+			else
+				DeleteUnaryNode(node, k);
 		}
 		
-		if ((node == this.maximum)&&(this.treeSize > 1))
+		else if ((node == this.maximum)&&(this.treeSize > 1))
 		{
 			WAVLNode predecessor = this.FindPredecessor(node);
 			this.maximum = predecessor;
-			DeleteLeaf(node,k);
-		}
+			if(node.rank == 0)
+				DeleteLeaf(node,k);
+			else
+				DeleteUnaryNode(node, k);		}
 		
 		// if k is a leaf
-		if (node.rank == 0)
+		else if (node.rank == 0)
 		{
 			DeleteLeaf(node,k);
 		}
