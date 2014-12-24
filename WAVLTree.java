@@ -456,6 +456,8 @@ public class WAVLTree{
 				{
 					node.parent.right = null;
 					node.parent = this.deletebalance(node.parent);
+					// Here we not have to call another function. we can call rotate with left child.
+					//why there is a difference between this suction and the suction starting at line 483. Is the symmetry case.
 				}
 			}
 			else if((rankDiff[0] == 2) &&(rankDiff[1] == 1))
@@ -475,7 +477,6 @@ public class WAVLTree{
 							grand.right = node.parent;
 					}
 					node = null;
-
 				}
 				else
 				{
@@ -485,19 +486,6 @@ public class WAVLTree{
 					node.parent=this.deletebalance(node.parent);
 				}
 			}
-//			else
-//			{
-//				if (node.parent.key > k)
-//				{
-//					node.parent.left=null;
-//					node.parent=this.deletebalance(node.parent);
-//				}
-//				else
-//				{
-//					node.parent.right=null;
-//					node.parent=this.deletebalance(node.parent);
-//				}
-//			}
 		}
 	}
 	public void DeleteUnaryNode(WAVLNode node,int k)
@@ -505,13 +493,13 @@ public class WAVLTree{
 		countDeleteBalance=0;
 		if (this.treeSize == 2)
 		{
-			if (this.root.right!=null)
+			if (this.root.right!= null)
 			{
-				node=node.right;
+				node = node.right;
 			}
 			else
 			{
-				node=node.left;
+				node = node.left;
 			}
 		}
 		else
@@ -731,25 +719,7 @@ public class WAVLTree{
 			}
 			node.key = tempKey;
 			node.info = tempInfo;
-			
-//			else
-//			{
-//				WAVLNode predecessor = this.FindPredecessor(node);
-//				int tempKey = predecessor.key;
-//				String tempInfo = predecessor.info;	
-//				if( predecessor.rank == 0)
-//				{
-//					this.DeleteLeaf(predecessor, predecessor.key);
-//				}
-//				else
-//				{
-//					DeleteUnaryNode(predecessor,predecessor.key);
-//				}
-//				node.key = tempKey;
-//				node.info = tempInfo;
-//
-//			}
-
+ 
 		}
 		this.treeSize--;
 		return 	countDeleteBalance;
