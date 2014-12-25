@@ -1,6 +1,6 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Random;
+import java.util.TreeSet;
 
 /**
  * WAVLTree
@@ -15,12 +15,11 @@ public class WAVLTree{
 	public WAVLNode minimum;
 	public WAVLNode maximum;
 	public int treeSize;
-	public int countBalance;
+	public int countInsertBalance;
 	public int countDeleteBalance;
 
 	/** Constructor; creates a tree with empty Node */
-	public WAVLTree() 
-	{
+	public WAVLTree(){
 		this.root = null;
 	}
 	/**
@@ -106,32 +105,7 @@ public class WAVLTree{
 		}
 		return rankDiff;
 	}
-	/**
-	 * public WAVLNode getParent ( WAVLNode n , int k)
-	 * return the father of the inserted Node 
-	 */
-	public WAVLNode getParent(WAVLNode root , int k){
 
-		if((root.key < k) && (root.right == null))
-		{
-			return root;
-		}
-		else if((root.key > k) && (root.left == null))
-		{
-			return root;
-		}
-
-		if (root.key < k)
-		{
-			return getParent(root.right , k);
-		}
-
-		else
-		{
-			return getParent(root.left , k);
-		}
-
-	}	
 
 
 	public WAVLNode rotateWithLeftChild (WAVLNode node){                  // Right Rotation
@@ -146,12 +120,7 @@ public class WAVLTree{
 		}
 
 		temp.right = node;
-		//node.rank --; maybe
 		temp.right.parent = temp;
-
-		if(temp.left != null)
-			temp.left.parent = temp;
-		// This dose no changes.
 
 		if ((node.right != null) &&  (node.left != null))
 			node.rank = Math.max(node.right.rank, node.left.rank) +1 ;
@@ -183,8 +152,6 @@ public class WAVLTree{
 
 		temp.left = node;
 		temp.left.parent = temp;
-		if(temp.right != null)
-			temp.right.parent = temp;
 
 
 		if ((node.right != null) &&  (node.left != null))
@@ -200,11 +167,6 @@ public class WAVLTree{
 			temp.rank = Math.max(temp.right.rank, node.rank) +1 ;
 		else
 			temp.rank = Math.max(-1, node.rank) +1 ;
-		//OLD				
-		//
-		//node.rank --;
-		//	temp.rank = node.rank +1;
-
 
 
 		return temp;
@@ -235,7 +197,7 @@ public class WAVLTree{
 			return -1;
 		}
 
-		this.countBalance = 0;
+		this.countInsertBalance = 0;
 		try {
 			this.root = insert_helper(k,i,this.root);
 			if(this.treeSize == 0)
@@ -247,8 +209,7 @@ public class WAVLTree{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("insertion number or rotation = " + this.countBalance);
-		return this.countBalance;
+		return this.countInsertBalance;
 
 	}
 	public WAVLNode insert_helper (int key,String i,WAVLNode t) throws Exception{
@@ -277,18 +238,18 @@ public class WAVLTree{
 				if (key < t.left.key)
 				{
 					t = rotateWithLeftChild (t);
-					this.countBalance++;
+					this.countInsertBalance++;
 				}
 				else 
 				{
 					t = doubleWithLeftChild (t);
-					this.countBalance+=2;
+					this.countInsertBalance+=2;
 				}
 			}
 			else if((rankdiff[1] == 1) && (rankdiff[0] == 0)) 
 			{
 				t.rank++;
-				this.countBalance++;
+				this.countInsertBalance++;
 			}
 		}
 		else if (key > t.key)
@@ -302,18 +263,18 @@ public class WAVLTree{
 				if (key > t.right.key)
 				{
 					t = rotateWithRightChild (t);
-					this.countBalance++;
+					this.countInsertBalance++;
 				}
 				else
 				{
 					t = doubleWithRightChild (t);
-					this.countBalance+=2;
+					this.countInsertBalance+=2;
 				}
 			}
 			else if((rankdiff[0]==1) && (rankdiff[1]==0)) 
 			{
 				t.rank++;
-				this.countBalance++;
+				this.countInsertBalance++;
 			}
 		}
 		else
@@ -328,7 +289,7 @@ public class WAVLTree{
 		WAVLNode temp = node;
 		if (temp.left!= null)
 		{
-			while (temp.left.right!= null)
+			while (temp.left.right != null)
 			{
 				temp.left = temp.left.right;
 			}
@@ -338,10 +299,11 @@ public class WAVLTree{
 		while ((predecessor != null) && (temp == predecessor.left))
 		{
 			temp = predecessor;
-			predecessor = this.getParent(this.root,temp.parent.key);
+			predecessor = temp.parent.parent;
 		}
 		return predecessor;
 	}
+	
 
 	//find successor
 	public WAVLNode FindSuccessor(WAVLNode node)
@@ -353,12 +315,12 @@ public class WAVLTree{
 		{
 			k = temp.right.key;
 			while (flag == 0)
-				if (this.NodeForKey(k).left != null)
-					k = this.NodeForKey(k).left.key;
+				if (this.getNode(k).left != null)
+					k = this.getNode(k).left.key;
 				else
 					flag = 1;
 
-			return this.NodeForKey(k);
+			return this.getNode(k);
 		} 
 		WAVLNode successor = node;
 		k = successor.key;
@@ -368,18 +330,18 @@ public class WAVLTree{
 			{
 				if (k > successor.parent.key)
 				{
-					k = this.NodeForKey(k).parent.key;
+					k = this.getNode(k).parent.key;
 					successor = successor.parent;
 				}
 				else
 					flag = 1;
 			}				
 		}
-		return this.NodeForKey(successor.parent.key);
+		return this.getNode(successor.parent.key);
 
 	}
 	//return WAVLNode for key
-	public WAVLNode NodeForKey(int i)
+	public WAVLNode getNode(int i)
 	{
 		if (this.root.key==i)
 		{
@@ -413,228 +375,197 @@ public class WAVLTree{
 		return null;
 	}	
 	// delete a leaf
-	public void DeleteLeaf(WAVLNode node,int k)
-	{
-		countDeleteBalance = 0;
-		if (this.treeSize == 1)
+	// delete a leaf
+		public void DeleteLeaf(WAVLNode node,int k)
 		{
-			this.root = null;
-		}
-		else
-		{
-			WAVLNode parent = node.parent;
-			node = null;
-			int[] rankDiff = this.getRankDiff(parent);
-			if ((rankDiff[0] == 1) && (rankDiff[1] == 1))
-				// The father is full. the rank of the children is 0 (leafs)
+			countDeleteBalance = 0;
+			if (this.treeSize == 1)
 			{
-				if (parent.key > k)
-				{
-					parent.left = null;
-				}
-				else
-				{
-					parent.right = null;
-				}
+				this.root = null;
 			}
-			else if ((rankDiff[0] == 1) &&(rankDiff[1] == 2))
-				// The father is heavy on the left size. two nodes on the left. One on the right. 
+			else
 			{
-				if (parent.key > k) // Want to delete left leaf.
+				int[] rankDiff = this.getRankDiff(node.parent);
+				if ((this.getRankDiff(node.parent)[0] == 1) &&(this.getRankDiff(node.parent)[1] == 1))
 				{
-					parent.left = null;					
-					parent.rank--;                             //demote
-					countDeleteBalance++;
-					if (parent.parent != null)
-						parent.parent = this.deletebalance(parent.parent);
-
-				}
-				else
-				{
-					parent.right = null;
-					parent = this.deletebalance(parent);
-					// Here we not have to call another function. we can call rotate with left child.
-					//why there is a difference between this suction and the suction starting at line 483. Is the symmetry case.
-					parent.rank--; //demote
-					countDeleteBalance++;
-					parent = this.deletebalance(parent);
-				}
-			}
-			else if((rankDiff[0] == 2) &&(rankDiff[1] == 1))
-				// The father is heavy on the right size. two nodes on the right. One on the left. 
-
-			{
-				if (parent.key > k)
-				{
-					parent.left = null;
-					WAVLNode grand = parent.parent;
-					parent = this.deletebalance(parent);
-					if (grand != null)
+					if (node.parent.key > k)
 					{
-						if (grand.key > parent.key)
-							grand.left = parent;
+						node.parent.left = null;
+					}
+					else
+					{
+						node.parent.right = null;
+					}
+				}
+				else if ((rankDiff[0] == 1) &&(rankDiff[1] == 2))
+				{
+					if (node.parent.key > k)
+					{
+						node.parent.left = null;
+						node.parent.rank--;                             //demote
+						countDeleteBalance++;
+						if (node.parent.parent != null)
+							node.parent.parent = this.deletebalance(node.parent.parent);
+						node = null;
+					}
+					else
+					{
+						node.parent.right = null;
+						node.parent=this.deletebalance(node.parent);
+					}
+				}
+				else if((rankDiff[0] == 2) &&(rankDiff[1] == 1))
+				{
+					if (node.parent.key > k)
+					{
+						node.parent.left = null;
+						WAVLNode grand = node.parent.parent;
+						node.parent = this.deletebalance(node.parent);
+						if (grand != null)
+						{
+							if (grand.key > node.parent.key)
+								grand.left = node.parent;
+							else
+								grand.right = node.parent;
+						}
+						node = null;
+
+					}
+					else
+					{
+						node.parent.right = null;
+						node.parent.rank--;//demote
+						countDeleteBalance++;
+						node.parent=this.deletebalance(node.parent);
+					}
+				}
+				else
+				{
+					if (node.parent.key>k)
+					{
+						node.parent.left=null;
+						node.parent=this.deletebalance(node.parent);
+					}
+					else
+					{
+						node.parent.right=null;
+						node.parent=this.deletebalance(node.parent);
+					}
+				}
+			}
+		}
+		
+		public void DeleteUnaryNode(WAVLNode node,int k)
+		{
+			countDeleteBalance=0;
+			if (this.treeSize == 2)
+			{
+				if (this.root.right!=null)
+				{
+					node=node.right;
+				}
+				else
+				{
+					node=node.left;
+				}
+			}
+			else
+			{
+				if (node.parent.rank == 2)
+				{
+					if (node.left != null)
+					{
+						if (node.left.key > node.parent.key)
+						{
+							node.parent.right = node.left;
+							node.left.parent=node.parent;
+						}
 						else
-							grand.right = parent;
+						{
+							node.parent.left = node.left;
+							node.left.parent=node.parent;
+						}
+					}
+					else
+					{
+						if (node.right.key > node.parent.key)
+						{
+							node.parent.right = node.right;
+							node.right.parent=node.parent;
+						}
+						else
+						{
+							node.parent.left = node.right;
+							node.right.parent=node.parent;
+						}				
 					}
 				}
 				else
 				{
-					parent.right = null;
-					parent.rank--;      //demote
-					countDeleteBalance++;
-					parent = this.deletebalance(parent);
-				}
-			}
-		}
-	}
-	public void DeleteUnaryNode(WAVLNode node,int k)
-	{
-		countDeleteBalance=0;
-		if (this.treeSize == 2)
-		{
-			if (this.root.right!= null)
-			{
-				node = node.right;
-			}
-			else
-			{
-				node = node.left;
-			}
-		}
-		else
-		{
-			if (node.parent.rank == 2)
-			{
-				if (node.left != null)
-				{
-					if (node.left.key > node.parent.key)
+					if (node.left!=null)
 					{
-						node.parent.right = node.left;
-						node.left.parent=node.parent;
-					}
-					else
-					{
-						node.parent.left = node.left;
-						node.left.parent=node.parent;
-					}
-				}
-				else
-				{
-					if (node.right.key > node.parent.key)
-					{
-						node.parent.right = node.right;
-						node.right.parent=node.parent;
-					}
-					else
-					{
-						node.parent.left = node.right;
-						node.right.parent=node.parent;
-					}				
-				}
-			}
-			else
-			{
-				if (node.left!=null)
-				{
-					if (node.left.key>node.parent.key)
-					{
-						node.parent.right=node.left;
-						node.left.parent=node.parent;
-					}
-					else
-					{
-						node.parent.left=node.left;
-						node.left.parent=node.parent;
-					}
-					this.deletebalance(node);
+						if (node.left.key>node.parent.key)
+						{
+							node.parent.right=node.left;
+							node.left.parent=node.parent;
+						}
+						else
+						{
+							node.parent.left=node.left;
+							node.left.parent=node.parent;
+						}
+						node=this.deletebalance(node);
 
-				}
-				else
-				{
-					if (node.right.key>node.parent.key)
-					{
-						node.parent.right=node.right;
-						node.right.parent=node.parent;
 					}
 					else
 					{
-						node.parent.left=node.right;
-						node.right.parent=node.parent;
-					}				
-					this.deletebalance(node);
+						if (node.right.key>node.parent.key)
+						{
+							node.parent.right=node.right;
+							node.right.parent=node.parent;
+						}
+						else
+						{
+							node.parent.left=node.right;
+							node.right.parent=node.parent;
+						}				
+						this.deletebalance(node);
+					}
 				}
 			}
-		}
 
-	}
-	public WAVLNode deletebalance(WAVLNode node)
-	{
-		if(node != this.root)
+		}
+		public WAVLNode deletebalance(WAVLNode node)
 		{
-			int[] rankDiff = this.getRankDiff(node);
-			// case 1 demote + symecric
-			if (((rankDiff[0]==3)&&(rankDiff[1]==2))||((rankDiff[0]==2)&&(rankDiff[1]==3)))
+			if(node != this.root)
 			{
-				node.rank--;
-				countDeleteBalance++;
-				return deletebalance(node.parent);
-			}
-			//case 2+3+4 double demote
-			else if ((rankDiff[0]==3) && (rankDiff[1]==1))
-			{
-				//case 2 double demote
-				int[] rankDiffright = this.getRankDiff(node.right);
-				if ((rankDiffright[0] == 2)&&(rankDiffright[1]==2))
+				int[] rankDiff = this.getRankDiff(node);
+				// case 1 demote + symecric
+				if (((rankDiff[0]==3)&&(rankDiff[1]==2))||((rankDiff[0]==2)&&(rankDiff[1]==3)))
 				{
-					node.right.rank--;
-					countDeleteBalance++;
 					node.rank--;
 					countDeleteBalance++;
-					return deletebalance(node.right);
+					return deletebalance(node.parent);
 				}
-				//case 3 rotate
-				else if(((rankDiffright[0]==2)||(rankDiffright[0]==1))&&(rankDiffright[1]==1))
-				{
-					node = this.rotateWithRightChild(node);
-					countDeleteBalance++;
-
-					if ((rankDiff[0]==2)&&(rankDiff[1]==2))
-					{
-						node.rank--;
-						countDeleteBalance++;
-					}
-					return node;
-				}
-				//case 4 double rotate
-				else if ((rankDiffright[0] == 1)&&(rankDiffright[1] == 2))
-				{
-					node = this.doubleWithRightChild(node);
-					countDeleteBalance += 2;
-					return node;
-				}
-			}
-			else
-			{
-				//case 2+3+4  symetry
-				if ((rankDiff[0]==1)&&(rankDiff[1]==3))
+				//case 2+3+4 double demote
+				else if ((rankDiff[0]==3) && (rankDiff[1]==1))
 				{
 					//case 2 double demote
-					int[] rankDiffleft = this.getRankDiff(node.left);
-
-					if ((rankDiffleft[0]==2)&&(rankDiffleft[1]==2))
+					int[] rankDiffright = this.getRankDiff(node.right);
+					if ((rankDiffright[0] == 2)&&(rankDiffright[1]==2))
 					{
-						node.left.rank--;
+						node.right.rank--;
 						countDeleteBalance++;
 						node.rank--;
 						countDeleteBalance++;
-						return deletebalance(node.left);
-
+						return deletebalance(node.right);
 					}
 					//case 3 rotate
-					else if((rankDiffleft[0]==1)&&((rankDiffleft[1]==1)||(this.getRankDiff(node.left)[1]==2)))
+					else if(((rankDiffright[0]==2)||(rankDiffright[0]==1))&&(rankDiffright[1]==1))
 					{
-						node = this.rotateWithLeftChild(node);
+						node = this.rotateWithRightChild(node);
 						countDeleteBalance++;
+
 						if ((rankDiff[0]==2)&&(rankDiff[1]==2))
 						{
 							node.rank--;
@@ -643,24 +574,61 @@ public class WAVLTree{
 						return node;
 					}
 					//case 4 double rotate
-					else if ((rankDiffleft[0]==2)&&(rankDiffleft[1]==1))
+					else if ((rankDiffright[0] == 1)&&(rankDiffright[1] == 2))
 					{
-						node= this.doubleWithLeftChild(node);
-					}						
-					countDeleteBalance++;
-					countDeleteBalance++;
-					return node;
+						node = this.doubleWithRightChild(node);
+						countDeleteBalance += 2;
+						return node;
+					}
 				}
-			}
-			return node;
+				else
+				{
+					//case 2+3+4  symetry
+					if ((rankDiff[0]==1)&&(rankDiff[1]==3))
+					{
+						//case 2 double demote
+						int[] rankDiffleft = this.getRankDiff(node.left);
 
+						if ((rankDiffleft[0]==2)&&(rankDiffleft[1]==2))
+						{
+							node.left.rank--;
+							countDeleteBalance++;
+							node.rank--;
+							countDeleteBalance++;
+							return deletebalance(node.left);
+
+						}
+						//case 3 rotate
+						else if((rankDiffleft[0]==1)&&((rankDiffleft[1]==1)||(this.getRankDiff(node.left)[1]==2)))
+						{
+							node = this.rotateWithLeftChild(node);
+							countDeleteBalance++;
+							if ((rankDiff[0]==2)&&(rankDiff[1]==2))
+							{
+								node.rank--;
+								countDeleteBalance++;
+							}
+							return node;
+						}
+						//case 4 double rotate
+						else if ((rankDiffleft[0]==2)&&(rankDiffleft[1]==1))
+						{
+							node= this.doubleWithLeftChild(node);
+						}						
+						countDeleteBalance++;
+						countDeleteBalance++;
+						return node;
+					}
+				}
+				return node;
+
+			}
+			else
+			{
+				this.root = this.deleteBalanceRoot(this.root);
+				return this.root;
+			}
 		}
-		else
-		{
-			this.root = this.deleteBalanceRoot(this.root);
-			return this.root;
-		}
-	}
 
 	public int delete(int k)
 	{
@@ -670,7 +638,7 @@ public class WAVLTree{
 			return -1;
 
 		// find the node that contains the key
-		WAVLNode node = NodeForKey(k);
+		WAVLNode node = getNode(k);
 
 		if ((node == this.minimum) && (this.treeSize > 1))
 		{
@@ -689,7 +657,8 @@ public class WAVLTree{
 			if(node.rank == 0)
 				DeleteLeaf(node,k);
 			else
-				DeleteUnaryNode(node, k);		}
+				DeleteUnaryNode(node, k);
+			}
 
 		// if k is a leaf
 		else if (node.rank == 0)
@@ -721,7 +690,7 @@ public class WAVLTree{
 
 		}
 		this.treeSize--;
-		return 	countDeleteBalance;
+		return 	this.countDeleteBalance;
 	}
 
 
@@ -751,9 +720,7 @@ public class WAVLTree{
 			//case 3 rotate
 			else if(((this.getRankDiff(node.right)[0]==2)||(this.getRankDiff(node.right)[0]==1))&&(this.getRankDiff(node.right)[1]==1))
 			{
-				System.out.println("case 3 , " + node.key );
-				System.out.println();
-
+	
 				node = this.rotateWithRightChild(node);
 				this.root = node;
 				countDeleteBalance++;
@@ -805,8 +772,7 @@ public class WAVLTree{
 				else if ((this.getRankDiff(node.left)[0]==2)&&(this.getRankDiff(node.left)[1]==1))
 				{
 					node=this.doubleWithLeftChild(node);
-					countDeleteBalance++;
-					countDeleteBalance++;
+					countDeleteBalance += 2 ;
 					return node;
 				}
 			}
@@ -992,6 +958,7 @@ public class WAVLTree{
 	class LinkedList {
 		// reference to the head node.
 		private Node head;
+		private Node tail;
 
 		// LinkedList constructor
 		public LinkedList() {
@@ -1000,17 +967,20 @@ public class WAVLTree{
 			head = new Node(null);
 		}
 
-		public void add(Object data)
+		public void add(Object data){
+		if(tail == null)
+			tail = head;
 		// appends the specified element to the end of this list.
-		{
+		
 			Node Temp = new Node(data);
-			Node Current = head;
+			Node Current = tail;
 			// starting at the head node, crawl to the end of the list
 			while (Current.getNext() != null) {
 				Current = Current.getNext();
 			}
 			// the last node's "next" reference set to our new node
 			Current.setNext(Temp);
+			tail = Current;
 		}
 
 		public void add(Object data, int index)
@@ -1086,4 +1056,91 @@ public class WAVLTree{
 			next = nextValue;
 		}
 	}
+	
+	
+	
+	
+	
+	public static void doAsymptoticTest()
+	{
+		WAVLTree t = new WAVLTree();
+		int[] insArr =new int[10];
+		int[] delArr = new int[10];
+		int[] maxIns = new int[10];
+		int[] maxDel = new int[10];
+		for (int i =1; i <= 10; i++)
+		{
+			TreeSet<Integer> l = new TreeSet<Integer>();
+			for(int j = 1; j<10000*i;j++)
+			{
+				Random d = new Random();
+				Integer p = d.nextInt();
+				if(l.contains(p))
+				{
+					j--;
+					continue;
+				}
+				l.add(p);
+				int o = t.insert(p, p + "");
+				insArr[i-1]+= o;
+				if(o > maxIns[i-1])
+					maxIns[i-1]=o;
+			}
+			for (Integer integer : l)
+		{
+			int o = t.delete(integer);
+//			if(! isWAVL(t.root))
+//		{
+//			System.out.println("ERROR!!!");
+//			}
+			delArr[i-1]+=o;
+			if(o > maxDel[i-1])
+					maxDel[i-1]=o;
+			}
+			System.out.println("Test " + i + ":");
+			System.out.println("Insert Maximum= " + maxIns[i-1]);
+			System.out.println("Insert Average= " + insArr[i-1]/(i*10000.0));
+			System.out.println("Delete Maximum= " + maxDel[i-1]);
+			System.out.println("Delete Average= " + delArr[i-1]/(i*10000.0));
+		}
+		System.out.println("Mission Completed");
+	}
+	public static boolean isWAVL(WAVLNode n)
+	{
+		// getRankDifference == RightSon.rank - LeftSon.rank
+		
+		int[] diff = new int[2];
+		if(n.left != null)
+		diff[0] = n.left.rank;
+		else
+			diff[0] = -1; 
+		if(n.right != null)
+		diff[1] = n.right.rank;
+		else
+			diff[1] = -1; 
+
+		boolean d = Math.abs(diff[0] - diff[1]) < 2;
+		
+		d = d && n.rank - n.left.rank <=2 && n.rank - n.right.rank <=2;
+		if(d && n.left != null)
+			d = d && isWAVL(n.left);
+		if(d && n.right != null)
+			d = d && isWAVL(n.right);
+		return d;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
