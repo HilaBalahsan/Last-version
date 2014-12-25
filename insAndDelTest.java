@@ -4,7 +4,7 @@ public class insAndDelTest {
 
 	public static void main(String[] args) {
 		WAVLTree T = new WAVLTree();
-		int mikre = 6;
+		int mikre = 4;
 
 		switch(mikre)
 		{
@@ -16,8 +16,16 @@ public class insAndDelTest {
 			{
 				T.insert(num, Integer.toString(num));
 			}
-			T.delete(5);
+			T.delete(40);
+
 			T.printBinaryTree(T.root, 0);
+			System.out.println();
+
+			for (int num:arr)
+			{
+				T.Printrelation(T.NodeForKey(num));
+			}
+
 			int [] keysArr = T.keysToArray();
 			String[] infoArr = T.infoToArray();
 			System.out.println(Arrays.toString(keysArr));
@@ -34,6 +42,14 @@ public class insAndDelTest {
 			}
 			T.delete(40);
 			T.printBinaryTree(T.root, 0);
+
+			System.out.println();
+
+			for (int num:arr)
+			{
+				T.Printrelation(T.NodeForKey(num));
+			}
+
 			int [] keysArr = T.keysToArray();
 			String[] infoArr = T.infoToArray();
 			System.out.println(Arrays.toString(keysArr));
@@ -51,6 +67,13 @@ public class insAndDelTest {
 			}
 			T.delete(20);
 			T.printBinaryTree(T.root, 0);
+
+			System.out.println();
+
+			for (int num:arr)
+			{
+				T.Printrelation(T.NodeForKey(num));
+			}
 			int [] keysArr = T.keysToArray();
 			String[] infoArr = T.infoToArray();
 			System.out.println(Arrays.toString(keysArr));
@@ -68,6 +91,13 @@ public class insAndDelTest {
 			T.delete(45);
 
 			T.printBinaryTree(T.root, 0);
+
+			System.out.println();
+
+			for (int num:arr)
+			{
+				T.Printrelation(T.NodeForKey(num));
+			}
 			int [] keysArr = T.keysToArray();
 			String[] infoArr = T.infoToArray();
 			System.out.println(Arrays.toString(keysArr));
@@ -77,12 +107,20 @@ public class insAndDelTest {
 		case 5:
 		{
 			int [] arr = {40, 50 , 20, 10 ,5};
+
 			for (int num:arr)
 			{
 				T.insert(num, Integer.toString(num));
 			}
-			
+
 			T.printBinaryTree(T.root, 0);
+
+			System.out.println();
+
+			for (int num:arr)
+			{
+				T.Printrelation(T.NodeForKey(num));
+			}
 			int [] keysArr = T.keysToArray();
 			String[] infoArr = T.infoToArray();
 			System.out.println(Arrays.toString(keysArr));
@@ -96,28 +134,21 @@ public class insAndDelTest {
 			{
 				T.insert(num, Integer.toString(num));
 			}
-			WAVLTree.WAVLNode check  = T.NodeForKey(20);
-			
-			T.delete(20);
-			if(check != null)
-			{
-				System.out.println("The node was not delet");
-			}
-			
-			
-			T.printBinaryTree(T.root, 0);
-			
 
-			
-//			int [] keysArr = T.keysToArray();
-//			String[] infoArr = T.infoToArray();
-//			System.out.println(Arrays.toString(keysArr));
-//			System.out.println(Arrays.deepToString(infoArr));
+			T.delete(45);
+			T.printBinaryTree(T.root, 0);
+			System.out.println();
+
+			for (int num:arr)
+			{
+				T.Printrelation(T.NodeForKey(num));
+			}
+
 			break;
-	
+
+		}
 		}
 	}
-}
 }
 
 

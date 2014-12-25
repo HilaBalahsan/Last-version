@@ -285,7 +285,7 @@ public class WAVLTree{
 					this.countBalance+=2;
 				}
 			}
-			else if((rankdiff[1]==1) && (rankdiff[0]==0)) 
+			else if((rankdiff[1] == 1) && (rankdiff[0] == 0)) 
 			{
 				t.rank++;
 				this.countBalance++;
@@ -342,6 +342,7 @@ public class WAVLTree{
 		}
 		return predecessor;
 	}
+
 	//find successor
 	public WAVLNode FindSuccessor(WAVLNode node)
 	{
@@ -358,7 +359,7 @@ public class WAVLTree{
 					flag = 1;
 
 			return this.NodeForKey(k);
-		}
+		} 
 		WAVLNode successor = node;
 		k = successor.key;
 		while (flag == 0)
@@ -375,12 +376,7 @@ public class WAVLTree{
 			}				
 		}
 		return this.NodeForKey(successor.parent.key);
-		//while ((successor != null)&&(temp == successor.right))
-		//{
-		//	temp=successor;
-		//	successor=this.getParent(this.root,temp.parent.key);;
-		//}
-		//return successor;
+
 	}
 	//return WAVLNode for key
 	public WAVLNode NodeForKey(int i)
@@ -426,65 +422,67 @@ public class WAVLTree{
 		}
 		else
 		{
-			int[] rankDiff = this.getRankDiff(node.parent);
-			if ((this.getRankDiff(node.parent)[0] == 1) &&(this.getRankDiff(node.parent)[1] == 1))
+			WAVLNode parent = node.parent;
+			node = null;
+			int[] rankDiff = this.getRankDiff(parent);
+			if ((rankDiff[0] == 1) && (rankDiff[1] == 1))
 				// The father is full. the rank of the children is 0 (leafs)
 			{
-				if (node.parent.key > k)
+				if (parent.key > k)
 				{
-					node.parent.left = null;
-					node = null;
+					parent.left = null;
 				}
 				else
 				{
-					node.parent.right = null;
-					node = null;
+					parent.right = null;
 				}
 			}
 			else if ((rankDiff[0] == 1) &&(rankDiff[1] == 2))
 				// The father is heavy on the left size. two nodes on the left. One on the right. 
 			{
-				if (node.parent.key > k) // Want to delete left leaf.
+				if (parent.key > k) // Want to delete left leaf.
 				{
-					node.parent.left = null;
-					node.parent.rank--;                             //demote
+					parent.left = null;					
+					parent.rank--;                             //demote
 					countDeleteBalance++;
-					if (node.parent.parent != null)
-						node.parent.parent = this.deletebalance(node.parent.parent);
-					node = null;
+					if (parent.parent != null)
+						parent.parent = this.deletebalance(parent.parent);
+
 				}
 				else
 				{
-					node.parent.right = null;
-					node.parent = this.deletebalance(node.parent);
+					parent.right = null;
+					parent = this.deletebalance(parent);
 					// Here we not have to call another function. we can call rotate with left child.
 					//why there is a difference between this suction and the suction starting at line 483. Is the symmetry case.
+					parent.rank--; //demote
+					countDeleteBalance++;
+					parent = this.deletebalance(parent);
 				}
 			}
 			else if((rankDiff[0] == 2) &&(rankDiff[1] == 1))
 				// The father is heavy on the right size. two nodes on the right. One on the left. 
 
 			{
-				if (node.parent.key > k)
+				if (parent.key > k)
 				{
-					node.parent.left = null;
-					WAVLNode grand = node.parent.parent;
-					node.parent = this.deletebalance(node.parent);
+					parent.left = null;
+					WAVLNode grand = parent.parent;
+					parent = this.deletebalance(parent);
 					if (grand != null)
 					{
-						if (grand.key > node.parent.key)
-							grand.left = node.parent;
+						if (grand.key > parent.key)
+							grand.left = parent;
 						else
-							grand.right = node.parent;
+							grand.right = parent;
 					}
-					node = null;
 				}
 				else
 				{
-					node.parent.right = null;
-					node.parent.rank--;//demote
+					parent.right = null;
+					parent.rank--;      //demote
 					countDeleteBalance++;
-					node.parent=this.deletebalance(node.parent);
+					parent = this.deletebalance(parent);
 				}
 			}
 		}
@@ -667,7 +665,7 @@ public class WAVLTree{
 	public int delete(int k)
 	{
 		countDeleteBalance = 0;
-		//if the key doesnt exist in the tree
+		//if the key doesn't exist in the tree
 		if (this.search(k) == null)
 			return -1;
 
@@ -911,7 +909,7 @@ public class WAVLTree{
 		return this.treeSize;	
 	}
 
-	
+
 	public void printBinaryTree(WAVLNode root, int level){
 		if(root == null)
 			return;
@@ -925,6 +923,27 @@ public class WAVLTree{
 		else
 			System.out.println(root.key +" " + Arrays.toString(this.getRankDiff(root))+ " " + " Rank = " + root.rank);
 		printBinaryTree(root.left, level+1);
+	}
+
+	public void Printrelation(WAVLNode root){
+		if(root != null)
+		{
+			System.out.println("I am " + root.key);
+
+			if(root.parent != null)
+			{
+				System.out.println(" My father is " + root.parent.key);
+			}
+			if(root.left != null)
+			{
+				System.out.println("My left child is " + root.left.key);
+			}
+			if(root.right != null)
+			{
+				System.out.println("My rigth child is " + root.right.key);
+			}
+			System.out.println();
+		}
 	}
 
 	/**
@@ -967,104 +986,104 @@ public class WAVLTree{
 			this.rank = 0;
 		}
 	}
-	
-	
-	
+
+
+
 	class LinkedList {
-	    // reference to the head node.
-	    private Node head;
-	 
-	    // LinkedList constructor
-	    public LinkedList() {
-	        // this is an empty list, so the reference to the head node
-	        // is set to a new node with no data
-	        head = new Node(null);
-	    }
-	 
-	    public void add(Object data)
-	    // appends the specified element to the end of this list.
-	    {
-	        Node Temp = new Node(data);
-	        Node Current = head;
-	        // starting at the head node, crawl to the end of the list
-	        while (Current.getNext() != null) {
-	            Current = Current.getNext();
-	        }
-	        // the last node's "next" reference set to our new node
-	        Current.setNext(Temp);
-	    }
-	 
-	    public void add(Object data, int index)
-	    // inserts the specified element at the specified position in this list
-	    {
-	        Node Temp = new Node(data);
-	        Node Current = head;
-	        // crawl to the requested index or the last element in the list,
-	        // whichever comes first
-	        for (int i = 1; i < index && Current.getNext() != null; i++) {
-	            Current = Current.getNext();
-	        }
-	        // set the new node's next-node reference to this node's next-node
-	        // reference
-	        Temp.setNext(Current.getNext());
-	        // now set this node's next-node reference to the new node
-	        Current.setNext(Temp);
-	    }
-	 
-	    public Object get(int index)
-	    // returns the element at the specified position in this list.
-	    {
-	        // index must be 1 or higher
-	        if (index <= 0)
-	            return null;
-	 
-	        Node Current = head.getNext();
-	        for (int i = 1; i < index; i++) {
-	            if (Current.getNext() == null)
-	                return null;
-	 
-	            Current = Current.getNext();
-	        }
-	        return Current.getData();
-	    }
+		// reference to the head node.
+		private Node head;
+
+		// LinkedList constructor
+		public LinkedList() {
+			// this is an empty list, so the reference to the head node
+			// is set to a new node with no data
+			head = new Node(null);
+		}
+
+		public void add(Object data)
+		// appends the specified element to the end of this list.
+		{
+			Node Temp = new Node(data);
+			Node Current = head;
+			// starting at the head node, crawl to the end of the list
+			while (Current.getNext() != null) {
+				Current = Current.getNext();
+			}
+			// the last node's "next" reference set to our new node
+			Current.setNext(Temp);
+		}
+
+		public void add(Object data, int index)
+		// inserts the specified element at the specified position in this list
+		{
+			Node Temp = new Node(data);
+			Node Current = head;
+			// crawl to the requested index or the last element in the list,
+			// whichever comes first
+			for (int i = 1; i < index && Current.getNext() != null; i++) {
+				Current = Current.getNext();
+			}
+			// set the new node's next-node reference to this node's next-node
+			// reference
+			Temp.setNext(Current.getNext());
+			// now set this node's next-node reference to the new node
+			Current.setNext(Temp);
+		}
+
+		public Object get(int index)
+		// returns the element at the specified position in this list.
+		{
+			// index must be 1 or higher
+			if (index <= 0)
+				return null;
+
+			Node Current = head.getNext();
+			for (int i = 1; i < index; i++) {
+				if (Current.getNext() == null)
+					return null;
+
+				Current = Current.getNext();
+			}
+			return Current.getData();
+		}
 	}
-	
-    private class Node {
-        // reference to the next node in the chain,
-        // or null if there isn't one.
-        Node next;
-        // data carried by this node.
-        // could be of any type you need.
-        Object data;
- 
-        // Node constructor
-        public Node(Object dataValue) {
-            next = null;
-            data = dataValue;
-        }
- 
-        // another Node constructor if we want to
-        // specify the node to point to.
-        public Node(Object dataValue, Node nextValue) {
-            next = nextValue;
-            data = dataValue;
-        }
- 
-        // these methods should be self-explanatory
-        public Object getData() {
-            return data;
-        }
- 
-        public void setData(Object dataValue) {
-            data = dataValue;
-        }
- 
-        public Node getNext() {
-            return next;
-        }
- 
-        public void setNext(Node nextValue) {
-            next = nextValue;
-        }
-    }
+
+	private class Node {
+		// reference to the next node in the chain,
+		// or null if there isn't one.
+		Node next;
+		// data carried by this node.
+		// could be of any type you need.
+		Object data;
+
+		// Node constructor
+		public Node(Object dataValue) {
+			next = null;
+			data = dataValue;
+		}
+
+		// another Node constructor if we want to
+		// specify the node to point to.
+		public Node(Object dataValue, Node nextValue) {
+			next = nextValue;
+			data = dataValue;
+		}
+
+		// these methods should be self-explanatory
+		public Object getData() {
+			return data;
+		}
+
+		public void setData(Object dataValue) {
+			data = dataValue;
+		}
+
+		public Node getNext() {
+			return next;
+		}
+
+		public void setNext(Node nextValue) {
+			next = nextValue;
+		}
+	}
 }
